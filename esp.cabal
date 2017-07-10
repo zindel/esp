@@ -1,0 +1,31 @@
+name:                esp
+version:             0.1.0.0
+-- synopsis:
+-- description:
+license:             MIT
+license-file:        LICENSE
+author:              Oleksiy Golovko <alexei.golovko@gmail.com>
+maintainer:          Oleksiy Golovko <alexei.golovko@gmail.com>
+-- copyright:
+-- category:
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+executable esp
+  main-is:             Main.hs
+  hs-source-dirs:      src
+  other-modules:       Esp.Lexer
+--                     , Calc.Parser
+--                     , Calc.Lexer
+--                     , Calc.Data
+--                     , Calc.Base
+--                     , Calc.Wrapper
+  -- other-extensions:
+  build-depends:       base >=4.7
+                     , bytestring
+                     , array
+  -- hs-source-dirs:
+  build-tools:         happy, alex
+  default-language:    Haskell2010
+  ghc-options:         -Wall
