@@ -26,7 +26,7 @@ tokens :-
     <scComment> \*\/ {
         \input len -> do (comment', commentPos') <- endComment
                          alexSetStartCode 0
-                         return $ Token commentPos' (TComment comment')
+                         return $ Token commentPos' TComment comment'
         -- token' TCommentEnd `andBegin` 0
     }
     <scComment> . | $line_terminator {
@@ -38,10 +38,10 @@ tokens :-
         token' TLineTerm
     }
     <0> @string {
-        token' $ TConst Str
+        token' TLit
     }
     ( \- | \+ )? ($digit+ (\. $digit*)? | \. $digit+) ((e|E) $digit+)? {
-        token' $ TConst Num
+        token' TLit
     }
     <0> $ident ($ident | digit) * {
         token' TIdent
@@ -63,33 +63,21 @@ alexInitUserState :: AlexUserState
 alexInitUserState = AlexUserState "" (AlexPn 0 0 0)
 
 
-data ConstType = Num
-               | Bool
-               | Str
-               | Regexp
-               | Null
-               | NaN
-               | Undefined
+data TokenType = TLit
+               | TIdent
+               | TOp
+               | TSep
+               | TLineTerm
+               | TComment
                deriving (Eq, Show)
 
-data TokenType = TConst ConstType String
-               | TIdent String
-               | TOp String
-               | TSep String
-               | TLineTerm String
-               | TComment String
-               | TCommentStart String
-               | TCommentSymbol String
-               | TCommentEnd String
-               deriving (Eq, Show)
-
-data Token = Token AlexPosn TokenType
+data Token = Token AlexPosn TokenType String
            | TEOF
            deriving (Eq, Show)
 
 alexEOF = return TEOF
 
-token' type' (p, _, _, s) len = return $ Token p $ type' $ take len s
+token' type' (p, _, _, s) len = return $ Token p type' $ take len s
 
 startComment :: AlexPosn -> Alex ()
 startComment p = Alex $ \s@AlexState{alex_ust=ust} ->
